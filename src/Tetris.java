@@ -23,7 +23,6 @@ public class Tetris extends JFrame{
     JLabel highestScore;
     Box menuBox;
     JButton boardMenuButton;
-    GridBagConstraints GBC;
 
     void menu(){
         setTitle("TETRIS");
