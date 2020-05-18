@@ -22,12 +22,14 @@ public class Tetris extends JFrame{
     JLabel right;
     JLabel highestScore;
     Box menuBox;
+    JButton boardMenuButton;
+    GridBagConstraints GBC;
 
     void menu(){
         setTitle("TETRIS");
         setSize(300, 270);
         setLocation((screenWidth-this.getWidth())/2, (screenHeight-this.getHeight())/2);
-        //setResizable(false);
+        setResizable(false);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         menuInit();
         setVisible(true);
@@ -76,6 +78,22 @@ public class Tetris extends JFrame{
         setLocation((screenWidth-this.getWidth())/2, (screenHeight-this.getHeight())/2);
         board = new Board();
         boardPanel = new BoardPanel();
+        boardMenuButton = new JButton("Wroc");
+        boardMenuButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                score = board.getPoints();
+                saveScore();
+                remove(boardPanel);
+                menu();
+            }
+        });
+        boardPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
+        boardPanel.add(boardMenuButton);
+
+
+
+
         boardPanel.addKeyListener(new KeyListener() {
             @Override
             public void keyTyped(KeyEvent e) {
@@ -168,7 +186,7 @@ public class Tetris extends JFrame{
             g.setColor(new Color(255, 0, 0));
             g.drawLine(0, 100, 400,100);
             g.setColor(new Color(0,255,0));
-            g.drawString("Wynik: "+ board.getPoints(), 345, 17);
+            g.drawString("Wynik: "+ board.getPoints(), 340, 45);
             boolean[][] currBoard = board.getBoard();
             for(int i=0; i<16; i++) {
                 for (int j = 0; j < 8; j++) {
