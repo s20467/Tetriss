@@ -1,3 +1,13 @@
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.UnsupportedAudioFileException;
+import java.io.File;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+
+import static java.lang.Thread.sleep;
+
 public class Board {
     boolean lost;
     int points = 0;
@@ -19,6 +29,21 @@ public class Board {
         arr = new boolean[16][8];
         lost=false;
         block = new Block();
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while(!lost){
+                    try {
+                        sleep(1000);
+                        moveDown();
+                    }
+                    catch(InterruptedException exc){
+                        System.out.println(exc.getMessage());
+                    }
+                }
+            }
+        });
+        thread.start();
     }
 
     public boolean isLost() {
@@ -27,6 +52,18 @@ public class Board {
 
     public int getPoints() {
         return points;
+    }
+
+    public void playSound(String path){
+        File file = new File(path);
+        try{
+            Clip clip = AudioSystem.getClip();
+            clip.open(AudioSystem.getAudioInputStream(file));
+            clip.start();
+        }
+        catch(Exception exc){
+            System.out.println(exc.getMessage());
+        }
     }
 
     public void moveRight(){
@@ -117,6 +154,7 @@ public class Board {
     }
 
     public void rotate(){
+        playSound("rotate.wav");
         if(block.blockPosition.getX()<0 || block.blockPosition.getX()>5)
             return;
         Block tmp = new Block();
@@ -137,6 +175,7 @@ public class Board {
     }
 
     public void generateBlock(){
+        playSound("placed.wav");
         block = new Block();
         if(ifCollision(block.getFullArray()))
             lost=true;
@@ -144,6 +183,7 @@ public class Board {
             for(int j=0; j<8; j++){
                 if(arr[i][j]) {
                     lost = true;
+                    playSound("lost.wav");
                 }
             }
         }
@@ -160,6 +200,7 @@ public class Board {
             if(counter==8) {
                 deleteRow(i);
                 points++;
+                playSound("score.wav");
             }
         }
     }
